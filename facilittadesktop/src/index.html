@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:;">
+    <title>Facilitta Portaria</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    
+    <!-- Carregamento do Chart.js com fallback -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
+</head>
+<body id="main-body">
+
+    <div id="login-screen" class="login-container">
+        <div class="login-left">
+            <h1>Bem vindo</h1>
+            <p>O jeito fácil de gerenciar entregas.</p>
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="username">Nome do usuário:</label>
+                    <input type="text" id="username" name="username" required autocomplete="username">
+                </div>
+                <div class="form-group">
+                    <label for="password">Senha:</label>
+                    <div class="password-input-container">
+                        <input type="password" id="password" name="password" required autocomplete="current-password">
+                        <button type="button" id="toggle-password" class="toggle-password-btn">
+                            <img src="./assets/eye-closed.svg" alt="Mostrar senha" id="password-toggle-icon">
+                        </button>
+                    </div>
+                </div>
+                <div id="login-error-message" class="status-message status-error" style="display: none;"></div>
+                <div class="form-actions">
+                    <button type="submit" class="btn-primary">Entrar</button>
+                </div>
+            </form>
+        </div>
+        <div class="login-right">
+            <img src="./assets/logo-login.png" alt="Logo" id="login-image">
+        </div>
+    </div>
+
+    <div id="app-container" class="app-container hidden">
+        <!-- Barra superior do app -->
+        <div id="app-topbar">
+            <div id="topbar-search-bar">
+                <input type="text" id="topbar-search-input" placeholder="Buscar.." autocomplete="on">
+                <img src="./assets/pesquisa.svg" alt="Buscar">
+            </div>
+        </div>
+        
+        <div class="sidebar">
+            <img src="./assets/logofundobranco.svg" alt="Logo" class="sidebar-logo" />
+            <div class="menu">
+                <button id="menu-dashboard" class="menu-item">
+                    <img src="./assets/dashboard.svg" alt="Dashboard" class="menu-icon" />
+                    Dashboard
+                </button>
+                <button id="menu-encomendas" class="menu-item">
+                    <img src="./assets/encomendas.svg" alt="Encomendas" class="menu-icon" />
+                    Encomendas
+                </button>
+                <button id="menu-moradores" class="menu-item">
+                    <img src="./assets/moradores.svg" alt="Moradores" class="menu-icon" />
+                    Moradores
+                </button>
+                <button id="menu-usuarios" class="menu-item">
+                    <img src="./assets/usuario.svg" alt="Usuários" class="menu-icon" />
+                    Usuários
+                </button>
+                <button id="menu-relatorios" class="menu-item">
+                    <img src="./assets/relatorio.svg" alt="Relatórios" class="menu-icon" />
+                    Relatórios
+                </button>
+                <button id="menu-ajustes" class="menu-item">
+                    <img src="./assets/ajustes.svg" alt="Ajustes" class="menu-icon" />
+                    Ajustes
+                </button>
+            </div>
+            <div class="sidebar-footer">
+                <button id="logout-button" class="btn-logout">
+                    <img src="./assets/logout-botao.svg" alt="Logout" class="logout-icon" />
+                    Sair
+                </button>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <!-- Painel de Encomendas -->
+            <div id="encomendas-content">
+                <!-- ... conteúdo das encomendas ... -->
+            </div>
+
+            <!-- Painel de Moradores -->
+            <div id="moradores-content" style="display:none">
+                <h2>Gerenciar moradores</h2>
+                
+                <div class="search-container">
+                    <input type="text" id="searchResidentInput" placeholder="Buscar morador..." class="search-input">
+                    <button id="searchResidentButton" class="search-button">
+                        <i class="fas fa-search"></i> Buscar
+                    </button>
+                </div>
+
+                <button id="btnImportarMoradores" class="btn-importar-moradores">
+                    Importar moradores (CSV)
+                </button>
+                <input type="file" id="inputCsvMoradores" accept=".csv"/>
+                <!-- ... resto do conteúdo dos moradores ... -->
+            </div>
+
+            <!-- Dashboard -->
+            <div id="dashboard-content">
+                <!-- Dashboard content will be dynamically generated by renderer.js -->
+            </div>
+
+            <!-- Ajustes -->
+            <div id="ajustes-content" style="display:none">
+                <!-- Header da seção -->
+                <div class="ajustes-header">
+                    <div class="ajustes-header-content">
+                        <h1 class="ajustes-title">Configurações</h1>
+                        <p class="ajustes-subtitle">Gerencie as configurações do sistema e personalize sua experiência</p>
+                    </div>
+                    <div class="ajustes-icon">
+                        <img src="./assets/ajustes.svg" alt="Configurações" />
+                    </div>
+                </div>
+
+                <!-- Grid de seções -->
+                <div class="ajustes-grid">
+                    <!-- Card de Dados do Condomínio -->
+                    <div class="ajustes-card">
+                        <div class="card-header">
+                            <div class="card-icon-container">
+                                <img src="./assets/moradores.svg" alt="Condomínio" class="card-header-icon" />
+                            </div>
+                            <div class="card-header-text">
+                                <h3>Dados do Condomínio</h3>
+                                <p>Configure as informações básicas do seu condomínio</p>
+                            </div>
+                        </div>
+                        
+                        <form id="form-condominio" class="ajustes-form">
+                            <div class="form-group-modern">
+                                <label for="condominio-nome" class="modern-label">
+                                    <span class="label-text">Nome do condomínio</span>
+                                    <span class="label-required">*</span>
+                                </label>
+                                <div class="input-container">
+                                    <input type="text" id="condominio-nome" name="condominioNome" required class="modern-input">
+                                    <div class="input-border"></div>
+                                </div>
+                            </div>
+
+                            <div class="form-group-modern">
+                                <label for="portaria-nome" class="modern-label">
+                                    <span class="label-text">Nome da portaria</span>
+                                    <span class="label-optional">(opcional)</span>
+                                </label>
+                                <div class="input-container">
+                                    <input type="text" id="portaria-nome" name="portariaNome" class="modern-input">
+                                    <div class="input-border"></div>
+                                </div>
+                            </div>
+
+                            <div class="form-group-modern file-upload-group">
+                                <label for="condominio-logo" class="modern-label">
+                                    <span class="label-text">Logo do condomínio</span>
+                                </label>
+                                <div class="file-upload-container">
+                                    <input type="file" id="condominio-logo" name="condominioLogo" accept="image/*" class="file-input">
+                                    <div class="file-upload-area">
+                                        <div class="upload-icon">
+                                            <img src="./assets/encomendas.svg" alt="Upload" />
+                                        </div>
+                                        <span class="upload-text">Clique para selecionar ou arraste uma imagem</span>
+                                        <span class="upload-hint">PNG, JPG até 5MB</span>
+                                    </div>
+                                </div>
+                                <div class="file-info">Se não selecionar, será usada a logo padrão.</div>
+                                
+                                <div id="logo-preview" class="logo-preview-container">
+                                    <div class="preview-label">Prévia:</div>
+                                    <div class="preview-image-container">
+                                        <img id="logo-preview-img" src="assets/logosemletrass.svg" alt="Logo do condomínio" class="preview-image">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-actions-modern">
+                                <button type="submit" class="btn-save-modern">
+                                    <span class="btn-icon">💾</span>
+                                    <span class="btn-text">Salvar Dados</span>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Card de API Mobile -->
+                    <div class="ajustes-card">
+                        <div class="card-header">
+                            <div class="card-icon-container mobile-icon">
+                                <img src="./assets/dashboard.svg" alt="API Mobile" class="card-header-icon" />
+                            </div>
+                            <div class="card-header-text">
+                                <h3>Conexão Mobile</h3>
+                                <p>Configure a conexão com o aplicativo móvel</p>
+                            </div>
+                        </div>
+
+                        <div class="api-status-section">
+                            <div class="status-indicator">
+                                <div class="status-dot active"></div>
+                                <span class="status-text">Servidor ativo</span>
+                            </div>
+                            <div class="api-info-grid">
+                                <div class="api-info-item">
+                                    <span class="info-label">Endereço:</span>
+                                    <code class="info-value" id="api-address">192.168.1.100:3001</code>
+                                </div>
+                                <div class="api-info-item">
+                                    <span class="info-label">Status:</span>
+                                    <span class="status-badge online">Online</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="qr-section-modern">
+                            <div class="qr-header">
+                                <h4>QR Code para Configuração</h4>
+                                <p>Escaneie com o app mobile para configuração automática</p>
+                            </div>
+                            <div class="qr-container-modern">
+                                <div class="qr-code-wrapper">
+                                    <canvas id="qr-canvas" class="qr-canvas"></canvas>
+                                    <div class="qr-overlay">
+                                        <div class="qr-corners">
+                                            <div class="corner top-left"></div>
+                                            <div class="corner top-right"></div>
+                                            <div class="corner bottom-left"></div>
+                                            <div class="corner bottom-right"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="qr-actions">
+                                    <button type="button" id="btn-refresh-qr" class="btn-refresh-modern">
+                                        <span class="btn-icon">🔄</span>
+                                        <span class="btn-text">Atualizar QR</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card de Backup -->
+                    <div class="ajustes-card">
+                        <div class="card-header">
+                            <div class="card-icon-container backup-icon">
+                                <img src="./assets/relatorio.svg" alt="Backup" class="card-header-icon" />
+                            </div>
+                            <div class="card-header-text">
+                                <h3>Backup & Segurança</h3>
+                                <p>Faça backup dos dados e mantenha o sistema seguro</p>
+                            </div>
+                        </div>
+
+                        <div class="backup-info">
+                            <div class="backup-stats">
+                                <div class="stat-item">
+                                    <span class="stat-number" id="total-encomendas">0</span>
+                                    <span class="stat-label">Encomendas</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-number" id="total-moradores">0</span>
+                                    <span class="stat-label">Moradores</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-number" id="total-usuarios">0</span>
+                                    <span class="stat-label">Usuários</span>
+                                </div>
+                            </div>
+                            
+                            <div class="last-backup">
+                                <span class="backup-label">Último backup:</span>
+                                <span class="backup-date" id="last-backup-date">Nunca realizado</span>
+                            </div>
+                        </div>
+
+                        <div class="backup-actions">
+                            <button type="button" id="btn-backup-completo" class="btn-backup-modern">
+                                <span class="btn-icon">📦</span>
+                                <span class="btn-text">Backup Completo</span>
+                            </button>
+                            <button type="button" id="btn-backup-dados" class="btn-backup-secondary">
+                                <span class="btn-icon">💾</span>
+                                <span class="btn-text">Apenas Dados</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Card de Sistema -->
+                    <div class="ajustes-card">
+                        <div class="card-header">
+                            <div class="card-icon-container system-icon">
+                                <img src="./assets/usuario.svg" alt="Sistema" class="card-header-icon" />
+                            </div>
+                            <div class="card-header-text">
+                                <h3>Informações do Sistema</h3>
+                                <p>Detalhes sobre a versão e performance</p>
+                            </div>
+                        </div>
+
+                        <div class="system-info">
+                            <div class="info-row">
+                                <span class="info-key">Versão:</span>
+                                <span class="info-value">Facilitta v2.1.0</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-key">Banco de dados:</span>
+                                <span class="info-value status-online">Conectado</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-key">Última atualização:</span>
+                                <span class="info-value">15/12/2024</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-key">Uptime:</span>
+                                <span class="info-value">2h 34m</span>
+                            </div>
+                        </div>
+
+                        <div class="system-actions">
+                            <button type="button" class="btn-system-check">
+                                <span class="btn-icon">🔍</span>
+                                <span class="btn-text">Verificar Sistema</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modais e outros conteúdos abaixo -->
+    <div id="modal-cadastro-encomenda" class="modal-overlay">
+        <div class="modal-content">
+            <h2 id="modal-encomenda-title">Cadastrar Nova Encomenda</h2>
+            <form id="form-cadastro-encomenda">
+                <input type="hidden" id="encomenda-id" name="encomendaId">
+                <div class="form-group">
+                    <label for="morador">Morador:</label>
+                    <input type="text" id="morador" name="morador" required autocomplete="off" placeholder="Digite para buscar...">
+                    <div id="morador-suggestions" class="suggestions-list"></div>
+                </div>
+                <div class="form-group form-row">
+                    <div class="form-subgroup">
+                        <label for="quantidade">Quantidade:</label>
+                        <input type="number" id="quantidade" name="quantidade" required value="1" min="1">
+                    </div>
+                    <div class="form-subgroup">
+                        <label for="data">Data Recebimento:</label>
+                        <input type="date" id="data" name="data" required>
+                    </div>
+                    <div class="form-subgroup">
+                        <label for="hora">Hora Recebimento:</label>
+                        <input type="time" id="hora" name="hora" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="porteiro">Porteiro que Recebeu:</label>
+                    <input type="text" id="porteiro" name="porteiro" required autocomplete="off" placeholder="Digite para buscar...">
+                    <div id="porteiro-suggestions" class="suggestions-list"></div>
+                </div>
+                <div class="form-group">
+                    <label for="observacoes">Observações:</label>
+                    <textarea id="observacoes" name="observacoes" rows="3"></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="button" id="btn-cancelar-encomenda-modal" class="btn-secondary">Cancelar</button>
+                    <button type="submit" id="btn-salvar-encomenda" class="btn-primary">Salvar Encomenda</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="modal-cadastro-morador" class="modal-overlay">
+        <div class="modal-content">
+            <h2 id="modal-morador-title">Cadastrar novo morador</h2>
+            <form id="form-cadastro-morador">
+                <input type="hidden" id="morador-id" name="moradorId">
+                <div class="form-group">
+                    <label for="morador-nome">Nome:</label>
+                    <input type="text" id="morador-nome" name="nome" required>
+                </div>
+                <div class="form-group">
+                    <label for="morador-telefone">Telefone:</label>
+                    <input type="tel" id="morador-telefone" name="telefone" placeholder="(Opcional)">
+                </div>
+                <div class="form-group">
+                    <label for="morador-rua">Rua:</label>
+                    <input type="text" id="morador-rua" name="rua" required>
+                </div>
+                <div class="form-group form-row">
+                    <div class="form-subgroup">
+                        <label for="morador-numero">Número:</label>
+                        <input type="text" id="morador-numero" name="numero" required>
+                    </div>
+                    <div class="form-subgroup">
+                        <label for="morador-bloco">BL/QD:</label>
+                        <input type="text" id="morador-bloco" name="bloco">
+                    </div>
+                    <div class="form-subgroup">
+                        <label for="morador-apartamento">AP/LT:</label>
+                        <input type="text" id="morador-apartamento" name="apartamento" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="morador-observacoes">Observações:(Opcional)</label>
+                    <textarea id="morador-observacoes" name="observacoes" rows="3"></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="button" id="btn-cancelar-morador-modal" class="btn-secondary">Cancelar</button>
+                    <button type="submit" id="btn-salvar-morador" class="btn-primary">Salvar Morador</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="modal-cadastro-usuario" class="modal-overlay">
+        <div class="modal-content">
+            <h2 id="modal-usuario-title">Cadastrar novo usuário</h2>
+            <form id="form-cadastro-usuario">
+                <input type="hidden" id="usuario-id" name="usuarioId">
+                <div class="form-group">
+                    <label for="usuario-nome">Nome:</label>
+                    <input type="text" id="usuario-nome" name="nome" required autocomplete="username">
+                    <small>Usado para entrar no sistema e como nome exibido.</small>
+                </div>
+                <div class="form-group">
+                    <label for="usuario-email">Email:</label>
+                    <input type="email" id="usuario-email" name="email" placeholder="(Opcional)">
+                </div>
+                <div class="form-group">
+                    <label for="usuario-nivel-acesso">Nível de acesso:</label>
+                    <select id="usuario-nivel-acesso" name="nivelAcesso" required>
+                        <option value="porteiro">Porteiro</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                </div>
+                <div class="form-group" id="grupo-status" style="display: none;">
+                    <label for="usuario-status">Status:</label>
+                    <select id="usuario-status" name="usuario-status">
+                        <option value="Ativo" selected>Ativo</option>
+                        <option value="Inativo">Inativo</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="usuario-senha">Senha:</label>
+                    <input type="password" id="usuario-senha" name="senha" required autocomplete="new-password">
+                    <small>Mínimo 6 caracteres. Deixe em branco na edição para não alterar.</small>
+                </div>
+                <div class="form-group">
+                    <label for="usuario-senha-confirm">Confirmar senha:</label>
+                    <input type="password" id="usuario-senha-confirm" name="senhaConfirm" required autocomplete="new-password">
+                </div>
+                <div class="form-actions">
+                    <button type="button" id="btn-cancelar-usuario-modal" class="btn-secondary">Cancelar</button>
+                    <button type="submit" id="btn-salvar-usuario" class="btn-primary">Salvar usuário</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="modal-entrega-encomenda" class="modal-overlay">
+        <div class="modal-content">
+            <h2 id="modal-entrega-title">Registrar entrega de encomenda</h2>
+            <form id="form-entrega-encomenda">
+                <input type="hidden" id="entrega-encomenda-id" name="entregaEncomendaId">
+                <div class="form-group">
+                    <label for="entrega-morador-info">Encomenda para:</label>
+                    <input type="text" id="entrega-morador-info" name="entregaMoradorInfo" readonly disabled>
+                </div>
+                <div class="form-group">
+                    <label for="entrega-porteiro">Porteiro que entregou:</label>
+                    <input type="text" id="entrega-porteiro" name="entregaPorteiro" required autocomplete="off" placeholder="Digite para buscar o porteiro...">
+                    <div id="entrega-porteiro-suggestions" class="suggestions-list"></div>
+                </div>
+                <div class="form-group form-row">
+                    <div class="form-subgroup">
+                        <label for="entrega-data">Data da entrega:</label>
+                        <input type="date" id="entrega-data" name="entregaData" required>
+                    </div>
+                    <div class="form-subgroup">
+                        <label for="entrega-hora">Hora da entrega:</label>
+                        <input type="time" id="entrega-hora" name="entregaHora" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="entrega-retirado-por">Entregue para (Nome de quem retirou):</label>
+                    <input type="text" id="entrega-retirado-por" name="entregaRetiradoPor" placeholder="Nome de quem retirou (se não o morador)">
+                </div>
+                <div class="form-group">
+                    <label for="entrega-observacoes">Observações da entrega (Opcional):</label>
+                    <textarea id="entrega-observacoes" name="entregaObservacoes" rows="3"></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="button" id="btn-cancelar-entrega-modal" class="btn-secondary">Cancelar</button>
+                    <button type="submit" id="btn-confirmar-entrega" class="btn-primary">Confirmar Entrega</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal de Perfil do Usuário -->
+    <div id="modal-perfil-usuario" class="modal-perfil-overlay">
+        <div class="modal-perfil-content">
+            <div class="modal-perfil-header">
+                <button class="modal-perfil-close" onclick="fecharModalPerfil()">×</button>
+                <h2>Perfil do Usuário</h2>
+                <div class="modal-perfil-avatar" id="perfil-avatar">
+                    <!-- Avatar será gerado dinamicamente -->
+                </div>
+            </div>
+            <div class="modal-perfil-body">
+                <div class="perfil-info-grid">
+                    <div class="perfil-info-item">
+                        <div class="perfil-info-label">Nome</div>
+                        <div class="perfil-info-value" id="perfil-nome-completo">-</div>
+                    </div>
+                    <div class="perfil-info-item">
+                        <div class="perfil-info-label">Nome de Usuário</div>
+                        <div class="perfil-info-value" id="perfil-nome-usuario">-</div>
+                    </div>
+                    <div class="perfil-info-item">
+                        <div class="perfil-info-label">E-mail</div>
+                        <div class="perfil-info-value" id="perfil-email">-</div>
+                    </div>
+                    <div class="perfil-info-item">
+                        <div class="perfil-info-label">Nível de Acesso</div>
+                        <div class="perfil-info-value">
+                            <span class="perfil-nivel-badge" id="perfil-nivel-badge">-</span>
+                        </div>
+                    </div>
+                    <div class="perfil-info-item">
+                        <div class="perfil-info-label">Status</div>
+                        <div class="perfil-info-value">
+                            <span class="perfil-status-badge" id="perfil-status-badge">-</span>
+                        </div>
+                    </div>
+                    <div class="perfil-info-item">
+                        <div class="perfil-info-label">Data de Criação</div>
+                        <div class="perfil-info-value" id="perfil-data-criacao">-</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="renderer.js"></script>
+    <script>
+        // Funcionalidade de toggle da senha
+        document.addEventListener('DOMContentLoaded', function() {
+            const togglePasswordBtn = document.getElementById('toggle-password');
+            const passwordInput = document.getElementById('password');
+            const passwordToggleIcon = document.getElementById('password-toggle-icon');
+
+            togglePasswordBtn.addEventListener('click', function() {
+                const isPassword = passwordInput.type === 'password';
+                
+                if (isPassword) {
+                    passwordInput.type = 'text';
+                    passwordToggleIcon.src = './assets/eye-open.svg';
+                    passwordToggleIcon.alt = 'Ocultar senha';
+                } else {
+                    passwordInput.type = 'password';
+                    passwordToggleIcon.src = './assets/eye-closed.svg';
+                    passwordToggleIcon.alt = 'Mostrar senha';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+
