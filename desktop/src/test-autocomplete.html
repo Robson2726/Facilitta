@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste de Autocomplete - Facilitta Portaria</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .test-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .test-section {
+            margin-bottom: 30px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .test-button {
+            background: #1976d2;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .test-button:hover {
+            background: #1565c0;
+        }
+        .result {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+        .result.success {
+            background: #e8f5e8;
+            border: 1px solid #4caf50;
+            color: #2e7d32;
+        }
+        .result.error {
+            background: #ffebee;
+            border: 1px solid #f44336;
+            color: #c62828;
+        }
+        .result.info {
+            background: #e3f2fd;
+            border: 1px solid #2196f3;
+            color: #1976d2;
+        }
+        
+        /* Estilos para autocomplete melhorado */
+        .autocomplete-wrapper {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .autocomplete-wrapper input {
+            transition: all 0.3s ease;
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .autocomplete-wrapper input:focus {
+            border-color: #1976d2;
+            box-shadow: 0 0 0 2px rgba(25, 118, 210, 0.2);
+        }
+
+        .autocomplete-wrapper input.selected {
+            border-color: #4caf50;
+            background-color: #f8fff8;
+        }
+
+        .selected-icon {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #4caf50;
+            font-weight: bold;
+            font-size: 14px;
+            display: none;
+            pointer-events: none;
+            z-index: 10;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .clear-button {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #f44336;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 14px;
+            cursor: pointer;
+            display: none;
+            z-index: 10;
+            transition: all 0.2s ease;
+        }
+
+        .clear-button:hover {
+            background: #d32f2f;
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-50%) scale(0.8); }
+            to { opacity: 1; transform: translateY(-50%) scale(1); }
+        }
+
+        /* Melhorar estilos das sugestões */
+        .suggestions-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            max-height: 200px;
+            overflow-y: auto;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            display: none;
+        }
+
+        .suggestions-dropdown.visible {
+            display: block;
+            animation: slideDown 0.2s ease;
+        }
+
+        @keyframes slideDown {
+            from { 
+                opacity: 0; 
+                transform: translateY(-10px); 
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0); 
+            }
+        }
+
+        .suggestion-item {
+            padding: 10px 12px;
+            cursor: pointer;
+            font-size: 14px;
+            border-bottom: 1px solid #f0f0f0;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .suggestion-item:last-child {
+            border-bottom: none;
+        }
+
+        .suggestion-item:hover {
+            background-color: #f5f5f5;
+            padding-left: 16px;
+        }
+
+        .suggestion-item.selected {
+            background-color: #e3f2fd;
+            color: #1976d2;
+            font-weight: 500;
+        }
+
+        .suggestion-item .user-icon {
+            width: 16px;
+            height: 16px;
+            background: #1976d2;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 10px;
+            font-weight: bold;
+        }
+
+        .suggestion-item .resident-icon {
+            width: 16px;
+            height: 16px;
+            background: #4caf50;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 10px;
+            font-weight: bold;
+        }
+
+        .suggestion-item .porter-icon {
+            width: 16px;
+            height: 16px;
+            background: #1976d2;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 10px;
+            font-weight: bold;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🧪 Teste de Autocomplete - Facilitta Portaria</h1>
+        <p>Este arquivo testa as melhorias no autocomplete com ícones visuais.</p>
+    </div>
+
+    <!-- Teste de Módulos -->
+    <div class="test-container">
+        <h2>📦 Teste de Módulos</h2>
+        
+        <div class="test-section">
+            <h3>Verificar Módulos Carregados</h3>
+            <button class="test-button" onclick="verificarModulos()">Verificar Módulos</button>
+            <div id="result-modulos" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>Teste de AutocompleteManager</h3>
+            <button class="test-button" onclick="testarAutocompleteManager()">Testar AutocompleteManager</button>
+            <div id="result-autocomplete" class="result"></div>
+        </div>
+    </div>
+
+    <!-- Teste de Campos -->
+    <div class="test-container">
+        <h2>🎯 Teste de Campos</h2>
+        
+        <div class="test-section">
+            <h3>Teste de Campo Morador</h3>
+            <div class="form-group">
+                <label for="morador">Morador:</label>
+                <div class="autocomplete-wrapper">
+                    <input type="text" id="morador" name="morador" placeholder="Digite o nome do morador..." autocomplete="off">
+                    <span class="selected-icon">✓</span>
+                    <button class="clear-button">×</button>
+                </div>
+                <div id="morador-suggestions" class="suggestions-dropdown"></div>
+            </div>
+            <button class="test-button" onclick="testarCampoMorador()">Testar Campo Morador</button>
+            <div id="result-morador" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>Teste de Campo Porteiro</h3>
+            <div class="form-group">
+                <label for="porteiro">Porteiro:</label>
+                <div class="autocomplete-wrapper">
+                    <input type="text" id="porteiro" name="porteiro" placeholder="Digite o nome do porteiro..." autocomplete="off">
+                    <span class="selected-icon">✓</span>
+                    <button class="clear-button">×</button>
+                </div>
+                <div id="porteiro-suggestions" class="suggestions-dropdown"></div>
+            </div>
+            <button class="test-button" onclick="testarCampoPorteiro()">Testar Campo Porteiro</button>
+            <div id="result-porteiro" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>Teste de Campo Porteiro Entrega</h3>
+            <div class="form-group">
+                <label for="entrega-porteiro">Porteiro Entrega:</label>
+                <div class="autocomplete-wrapper">
+                    <input type="text" id="entrega-porteiro" name="entrega-porteiro" placeholder="Digite o nome do porteiro..." autocomplete="off">
+                    <span class="selected-icon">✓</span>
+                    <button class="clear-button">×</button>
+                </div>
+                <div id="entrega-porteiro-suggestions" class="suggestions-dropdown"></div>
+            </div>
+            <button class="test-button" onclick="testarCampoEntregaPorteiro()">Testar Campo Entrega Porteiro</button>
+            <div id="result-entrega-porteiro" class="result"></div>
+        </div>
+    </div>
+
+    <!-- Teste de Funcionalidades -->
+    <div class="test-container">
+        <h2>⚡ Teste de Funcionalidades</h2>
+        
+        <div class="test-section">
+            <h3>Teste de Seleção e Limpeza</h3>
+            <button class="test-button" onclick="simularSelecao()">Simular Seleção</button>
+            <button class="test-button" onclick="testarLimpeza()">Testar Limpeza</button>
+            <div id="result-funcionalidades" class="result"></div>
+        </div>
+    </div>
+
+    <script>
+        // Função para exibir resultados
+        function mostrarResultado(elementId, mensagem, tipo = 'info') {
+            const element = document.getElementById(elementId);
+            element.textContent = mensagem;
+            element.className = `result ${tipo}`;
+        }
+
+        // Verificar módulos
+        function verificarModulos() {
+            const modulos = [
+                'AutocompleteManager',
+                'ModalManager',
+                'FormsManager',
+                'AuthManager',
+                'SearchManager',
+                'ContentManager',
+                'DashboardManager',
+                'AppManager'
+            ];
+
+            const resultados = {};
+            for (const modulo of modulos) {
+                resultados[modulo] = typeof window[modulo] === 'function';
+            }
+
+            const managers = [
+                'autocompleteManager',
+                'modalManager',
+                'formsManager',
+                'authManager',
+                'searchManager',
+                'contentManager',
+                'dashboardManager',
+                'appManager'
+            ];
+
+            for (const manager of managers) {
+                resultados[manager] = typeof window[manager] === 'object';
+            }
+
+            const mensagem = `Módulos e Managers:\n${JSON.stringify(resultados, null, 2)}`;
+            mostrarResultado('result-modulos', mensagem, 'info');
+        }
+
+        // Testar AutocompleteManager
+        function testarAutocompleteManager() {
+            try {
+                if (!window.autocompleteManager) {
+                    throw new Error('AutocompleteManager não inicializado');
+                }
+
+                const metodos = [
+                    'setupMoradorAutocomplete',
+                    'setupPorteiroAutocomplete',
+                    'setupEntregaPorteiroAutocomplete',
+                    'handleMoradorInput',
+                    'handlePorteiroInput',
+                    'handleEntregaPorteiroInput',
+                    'getSelectedMoradorId',
+                    'getSelectedPorteiroUserId',
+                    'getSelectedEntregaPorteiroId',
+                    'updateFieldVisualState',
+                    'clearField'
+                ];
+
+                const resultados = {};
+                for (const metodo of metodos) {
+                    resultados[metodo] = typeof window.autocompleteManager[metodo] === 'function';
+                }
+
+                const mensagem = `Métodos do AutocompleteManager:\n${JSON.stringify(resultados, null, 2)}`;
+                mostrarResultado('result-autocomplete', mensagem, 'success');
+            } catch (error) {
+                mostrarResultado('result-autocomplete', `Erro: ${error.message}`, 'error');
+            }
+        }
+
+        // Testar campo morador
+        function testarCampoMorador() {
+            try {
+                const input = document.getElementById('morador');
+                if (!input) {
+                    throw new Error('Campo morador não encontrado');
+                }
+
+                // Simular digitação
+                input.value = 'João';
+                input.dispatchEvent(new Event('input'));
+
+                mostrarResultado('result-morador', 'Campo morador testado com sucesso!', 'success');
+            } catch (error) {
+                mostrarResultado('result-morador', `Erro: ${error.message}`, 'error');
+            }
+        }
+
+        // Testar campo porteiro
+        function testarCampoPorteiro() {
+            try {
+                const input = document.getElementById('porteiro');
+                if (!input) {
+                    throw new Error('Campo porteiro não encontrado');
+                }
+
+                // Simular digitação
+                input.value = 'Maria';
+                input.dispatchEvent(new Event('input'));
+
+                mostrarResultado('result-porteiro', 'Campo porteiro testado com sucesso!', 'success');
+            } catch (error) {
+                mostrarResultado('result-porteiro', `Erro: ${error.message}`, 'error');
+            }
+        }
+
+        // Testar campo porteiro entrega
+        function testarCampoEntregaPorteiro() {
+            try {
+                const input = document.getElementById('entrega-porteiro');
+                if (!input) {
+                    throw new Error('Campo porteiro entrega não encontrado');
+                }
+
+                // Simular digitação
+                input.value = 'Pedro';
+                input.dispatchEvent(new Event('input'));
+
+                mostrarResultado('result-entrega-porteiro', 'Campo porteiro entrega testado com sucesso!', 'success');
+            } catch (error) {
+                mostrarResultado('result-entrega-porteiro', `Erro: ${error.message}`, 'error');
+            }
+        }
+
+        // Simular seleção
+        function simularSelecao() {
+            try {
+                const input = document.getElementById('morador');
+                if (!input) {
+                    throw new Error('Campo morador não encontrado');
+                }
+
+                // Simular seleção
+                input.value = 'João Silva';
+                if (window.autocompleteManager) {
+                    window.autocompleteManager.updateFieldVisualState(input, true);
+                }
+
+                mostrarResultado('result-funcionalidades', 'Seleção simulada com sucesso! Verifique o ícone verde.', 'success');
+            } catch (error) {
+                mostrarResultado('result-funcionalidades', `Erro: ${error.message}`, 'error');
+            }
+        }
+
+        // Testar limpeza
+        function testarLimpeza() {
+            try {
+                const input = document.getElementById('morador');
+                if (!input) {
+                    throw new Error('Campo morador não encontrado');
+                }
+
+                // Simular limpeza
+                if (window.autocompleteManager) {
+                    window.autocompleteManager.clearField('morador');
+                }
+
+                mostrarResultado('result-funcionalidades', 'Limpeza simulada com sucesso!', 'success');
+            } catch (error) {
+                mostrarResultado('result-funcionalidades', `Erro: ${error.message}`, 'error');
+            }
+        }
+
+        // Configurar event listeners dos botões de limpar
+        document.addEventListener('DOMContentLoaded', () => {
+            const clearButtons = document.querySelectorAll('.clear-button');
+            clearButtons.forEach(button => {
+                button.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const input = button.parentElement.querySelector('input');
+                    if (input && window.autocompleteManager) {
+                        const fieldType = input.id;
+                        window.autocompleteManager.clearField(fieldType);
+                    }
+                });
+            });
+        });
+
+        // Inicializar testes quando a página carregar
+        window.addEventListener('load', () => {
+            console.log('[Teste] Página de teste de autocomplete carregada');
+            verificarModulos();
+            testarAutocompleteManager();
+        });
+    </script>
+</body>
+</html> 

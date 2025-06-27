@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Teste de Módulos - Facilitta Portaria</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ccc; border-radius: 5px; }
+        .success { background-color: #d4edda; border-color: #c3e6cb; }
+        .error { background-color: #f8d7da; border-color: #f5c6cb; }
+        .warning { background-color: #fff3cd; border-color: #ffeaa7; }
+        button { margin: 5px; padding: 8px 15px; }
+    </style>
+</head>
+<body>
+    <h1>Teste de Módulos - Facilitta Portaria</h1>
+    
+    <div class="test-section">
+        <h2>Status dos Módulos</h2>
+        <div id="module-status"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Teste de Funcionalidades</h2>
+        <button onclick="testAuth()">Testar Auth</button>
+        <button onclick="testModals()">Testar Modals</button>
+        <button onclick="testAutocomplete()">Testar Autocomplete</button>
+        <button onclick="testSearch()">Testar Search</button>
+        <button onclick="testContent()">Testar Content</button>
+        <button onclick="testDashboard()">Testar Dashboard</button>
+        <button onclick="testForms()">Testar Forms</button>
+        <button onclick="testApp()">Testar App</button>
+    </div>
+    
+    <div class="test-section">
+        <h2>Logs</h2>
+        <div id="logs" style="background: #f8f9fa; padding: 10px; height: 200px; overflow-y: auto; font-family: monospace; font-size: 12px;"></div>
+    </div>
+
+    <script>
+        // Função para adicionar logs
+        function addLog(message, type = 'info') {
+            const logsDiv = document.getElementById('logs');
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = document.createElement('div');
+            logEntry.innerHTML = `[${timestamp}] ${message}`;
+            logEntry.style.color = type === 'error' ? 'red' : type === 'success' ? 'green' : 'black';
+            logsDiv.appendChild(logEntry);
+            logsDiv.scrollTop = logsDiv.scrollHeight;
+        }
+
+        // Verificar módulos
+        function checkModules() {
+            const moduleStatus = document.getElementById('module-status');
+            const modules = [
+                'AuthManager', 'ModalsManager', 'AutocompleteManager', 
+                'SearchManager', 'ContentManager', 'DashboardManager', 
+                'FormsManager', 'AppManager'
+            ];
+            
+            let html = '';
+            modules.forEach(module => {
+                const isLoaded = typeof window[module] !== 'undefined';
+                const status = isLoaded ? '✅ Carregado' : '❌ Não carregado';
+                const className = isLoaded ? 'success' : 'error';
+                html += `<div class="${className}">${module}: ${status}</div>`;
+            });
+            
+            moduleStatus.innerHTML = html;
+        }
+
+        // Testes de funcionalidades
+        function testAuth() {
+            addLog('Testando AuthManager...');
+            if (window.AuthManager) {
+                addLog('AuthManager disponível', 'success');
+            } else {
+                addLog('AuthManager não disponível', 'error');
+            }
+        }
+
+        function testModals() {
+            addLog('Testando ModalsManager...');
+            if (window.ModalsManager) {
+                addLog('ModalsManager disponível', 'success');
+            } else {
+                addLog('ModalsManager não disponível', 'error');
+            }
+        }
+
+        function testAutocomplete() {
+            addLog('Testando AutocompleteManager...');
+            if (window.AutocompleteManager) {
+                addLog('AutocompleteManager disponível', 'success');
+            } else {
+                addLog('AutocompleteManager não disponível', 'error');
+            }
+        }
+
+        function testSearch() {
+            addLog('Testando SearchManager...');
+            if (window.SearchManager) {
+                addLog('SearchManager disponível', 'success');
+            } else {
+                addLog('SearchManager não disponível', 'error');
+            }
+        }
+
+        function testContent() {
+            addLog('Testando ContentManager...');
+            if (window.ContentManager) {
+                addLog('ContentManager disponível', 'success');
+            } else {
+                addLog('ContentManager não disponível', 'error');
+            }
+        }
+
+        function testDashboard() {
+            addLog('Testando DashboardManager...');
+            if (window.DashboardManager) {
+                addLog('DashboardManager disponível', 'success');
+            } else {
+                addLog('DashboardManager não disponível', 'error');
+            }
+        }
+
+        function testForms() {
+            addLog('Testando FormsManager...');
+            if (window.FormsManager) {
+                addLog('FormsManager disponível', 'success');
+            } else {
+                addLog('FormsManager não disponível', 'error');
+            }
+        }
+
+        function testApp() {
+            addLog('Testando AppManager...');
+            if (window.AppManager) {
+                addLog('AppManager disponível', 'success');
+            } else {
+                addLog('AppManager não disponível', 'error');
+            }
+        }
+
+        // Verificar módulos quando a página carregar
+        window.addEventListener('load', () => {
+            addLog('Página carregada, verificando módulos...');
+            setTimeout(checkModules, 1000);
+        });
+    </script>
+</body>
+</html> 

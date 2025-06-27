@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste de Relatórios - Facilitta Portaria</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .test-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .test-section {
+            margin-bottom: 30px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .test-button {
+            background: #1976d2;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .test-button:hover {
+            background: #1565c0;
+        }
+        .test-button.danger {
+            background: #d32f2f;
+        }
+        .test-button.danger:hover {
+            background: #c62828;
+        }
+        .test-button.success {
+            background: #388e3c;
+        }
+        .test-button.success:hover {
+            background: #2e7d32;
+        }
+        .result {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+        .result.success {
+            background: #e8f5e8;
+            border: 1px solid #4caf50;
+            color: #2e7d32;
+        }
+        .result.error {
+            background: #ffebee;
+            border: 1px solid #f44336;
+            color: #c62828;
+        }
+        .result.info {
+            background: #e3f2fd;
+            border: 1px solid #2196f3;
+            color: #1976d2;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .form-row {
+            display: flex;
+            gap: 15px;
+        }
+        .form-row .form-group {
+            flex: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🧪 Teste de Relatórios - Facilitta Portaria</h1>
+        <p>Este arquivo testa as funcionalidades de relatório do sistema.</p>
+    </div>
+
+    <!-- Teste de APIs -->
+    <div class="test-container">
+        <h2>🔧 Teste de APIs</h2>
+        
+        <div class="test-section">
+            <h3>Verificar APIs Disponíveis</h3>
+            <button class="test-button" onclick="testarAPIsDisponiveis()">Verificar APIs</button>
+            <div id="result-apis" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>Teste de Busca de Relatório</h3>
+            <form id="form-teste-relatorio">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="data-inicial">Data Inicial:</label>
+                        <input type="date" id="data-inicial" name="dataInicial">
+                    </div>
+                    <div class="form-group">
+                        <label for="data-final">Data Final:</label>
+                        <input type="date" id="data-final" name="dataFinal">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="morador">Morador:</label>
+                        <input type="text" id="morador" name="morador" placeholder="Nome do morador">
+                    </div>
+                    <div class="form-group">
+                        <label for="porteiro">Porteiro:</label>
+                        <input type="text" id="porteiro" name="porteiro" placeholder="Nome do porteiro">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="status">Status:</label>
+                    <select id="status" name="status">
+                        <option value="">Todos</option>
+                        <option value="Recebida na portaria">Recebida na portaria</option>
+                        <option value="Entregue">Entregue</option>
+                    </select>
+                </div>
+                <button type="submit" class="test-button success">Buscar Relatório</button>
+                <button type="button" class="test-button" onclick="testarBuscaRelatorioSimples()">Busca Simples</button>
+            </form>
+            <div id="result-relatorio" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>Teste de Exportação PDF</h3>
+            <button class="test-button" onclick="testarExportarPDF()">Exportar PDF</button>
+            <div id="result-pdf" class="result"></div>
+        </div>
+    </div>
+
+    <!-- Teste de Módulos -->
+    <div class="test-container">
+        <h2>📦 Teste de Módulos</h2>
+        
+        <div class="test-section">
+            <h3>Verificar Módulos Carregados</h3>
+            <button class="test-button" onclick="verificarModulos()">Verificar Módulos</button>
+            <div id="result-modulos" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>Teste de ContentManager</h3>
+            <button class="test-button" onclick="testarContentManager()">Testar ContentManager</button>
+            <div id="result-content" class="result"></div>
+        </div>
+    </div>
+
+    <!-- Teste de Event Listeners -->
+    <div class="test-container">
+        <h2>🎧 Teste de Event Listeners</h2>
+        
+        <div class="test-section">
+            <h3>Simular Formulário de Relatório</h3>
+            <button class="test-button" onclick="simularFormularioRelatorio()">Simular Formulário</button>
+            <div id="result-events" class="result"></div>
+        </div>
+    </div>
+
+    <script>
+        // Função para exibir resultados
+        function mostrarResultado(elementId, mensagem, tipo = 'info') {
+            const element = document.getElementById(elementId);
+            element.textContent = mensagem;
+            element.className = `result ${tipo}`;
+        }
+
+        // Testar APIs disponíveis
+        async function testarAPIsDisponiveis() {
+            try {
+                const apis = [
+                    'buscarRelatorio',
+                    'exportarRelatorioPDF',
+                    'searchResidents',
+                    'searchActivePorters'
+                ];
+
+                const resultados = {};
+                for (const api of apis) {
+                    resultados[api] = typeof window.electronAPI?.[api] === 'function';
+                }
+
+                const mensagem = `APIs de Relatório:\n${JSON.stringify(resultados, null, 2)}`;
+                mostrarResultado('result-apis', mensagem, 'success');
+            } catch (error) {
+                mostrarResultado('result-apis', `Erro: ${error.message}`, 'error');
+            }
+        }
+
+        // Testar busca de relatório
+        async function testarBuscaRelatorioSimples() {
+            try {
+                if (!window.electronAPI?.buscarRelatorio) {
+                    throw new Error('API buscarRelatorio não disponível');
+                }
+
+                const filtros = {
+                    dataInicial: '',
+                    dataFinal: '',
+                    morador: '',
+                    porteiro: '',
+                    status: ''
+                };
+
+                console.log('[Teste] Buscando relatório com filtros:', filtros);
+                const result = await window.electronAPI.buscarRelatorio(filtros);
+                
+                const mensagem = `Resultado da busca:\n${JSON.stringify(result, null, 2)}`;
+                mostrarResultado('result-relatorio', mensagem, result?.success ? 'success' : 'error');
+            } catch (error) {
+                mostrarResultado('result-relatorio', `Erro: ${error.message}`, 'error');
+            }
+        }
+
+        // Testar exportação PDF
+        async function testarExportarPDF() {
+            try {
+                if (!window.electronAPI?.exportarRelatorioPDF) {
+                    throw new Error('API exportarRelatorioPDF não disponível');
+                }
+
+                const filtros = {
+                    dataInicial: '',
+                    dataFinal: '',
+                    morador: '',
+                    porteiro: '',
+                    status: ''
+                };
+
+                console.log('[Teste] Exportando PDF com filtros:', filtros);
+                const result = await window.electronAPI.exportarRelatorioPDF(filtros);
+                
+                const mensagem = `Resultado da exportação:\n${JSON.stringify(result, null, 2)}`;
+                mostrarResultado('result-pdf', mensagem, result?.success ? 'success' : 'error');
+            } catch (error) {
+                mostrarResultado('result-pdf', `Erro: ${error.message}`, 'error');
+            }
+        }
+
+        // Verificar módulos
+        function verificarModulos() {
+            const modulos = [
+                'ContentManager',
+                'AuthManager',
+                'ModalsManager',
+                'AutocompleteManager',
+                'SearchManager',
+                'DashboardManager',
+                'FormsManager',
+                'AppManager'
+            ];
+
+            const resultados = {};
+            for (const modulo of modulos) {
+                resultados[modulo] = typeof window[modulo] === 'function';
+            }
+
+            const managers = [
+                'contentManager',
+                'authManager',
+                'modalManager',
+                'autocompleteManager',
+                'searchManager',
+                'dashboardManager',
+                'formsManager',
+                'appManager'
+            ];
+
+            for (const manager of managers) {
+                resultados[manager] = typeof window[manager] === 'object';
+            }
+
+            const mensagem = `Módulos e Managers:\n${JSON.stringify(resultados, null, 2)}`;
+            mostrarResultado('result-modulos', mensagem, 'info');
+        }
+
+        // Testar ContentManager
+        function testarContentManager() {
+            try {
+                if (!window.contentManager) {
+                    throw new Error('ContentManager não inicializado');
+                }
+
+                const metodos = [
+                    'carregarRelatorios',
+                    'setupRelatoriosEventListeners',
+                    'exibirResultadosRelatorio'
+                ];
+
+                const resultados = {};
+                for (const metodo of metodos) {
+                    resultados[metodo] = typeof window.contentManager[metodo] === 'function';
+                }
+
+                const mensagem = `Métodos do ContentManager:\n${JSON.stringify(resultados, null, 2)}`;
+                mostrarResultado('result-content', mensagem, 'success');
+            } catch (error) {
+                mostrarResultado('result-content', `Erro: ${error.message}`, 'error');
+            }
+        }
+
+        // Simular formulário de relatório
+        function simularFormularioRelatorio() {
+            try {
+                // Criar elementos simulados
+                const formFiltros = document.createElement('form');
+                formFiltros.id = 'form-filtros-relatorio';
+                formFiltros.innerHTML = `
+                    <input type="date" name="dataInicial" value="2024-01-01">
+                    <input type="date" name="dataFinal" value="2024-12-31">
+                    <input type="text" name="morador" value="">
+                    <input type="text" name="porteiro" value="">
+                    <select name="status">
+                        <option value="">Todos</option>
+                        <option value="Recebida na portaria">Recebida na portaria</option>
+                        <option value="Entregue">Entregue</option>
+                    </select>
+                `;
+
+                const resultadosContainer = document.createElement('div');
+                resultadosContainer.id = 'resultados-relatorio';
+
+                // Testar se o ContentManager pode configurar os event listeners
+                if (window.contentManager?.setupRelatoriosEventListeners) {
+                    window.contentManager.setupRelatoriosEventListeners(formFiltros, resultadosContainer);
+                    mostrarResultado('result-events', 'Event listeners configurados com sucesso!', 'success');
+                } else {
+                    throw new Error('Método setupRelatoriosEventListeners não disponível');
+                }
+            } catch (error) {
+                mostrarResultado('result-events', `Erro: ${error.message}`, 'error');
+            }
+        }
+
+        // Configurar formulário de teste
+        document.getElementById('form-teste-relatorio').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            try {
+                if (!window.electronAPI?.buscarRelatorio) {
+                    throw new Error('API buscarRelatorio não disponível');
+                }
+
+                const formData = new FormData(e.target);
+                const filtros = {
+                    dataInicial: formData.get('dataInicial'),
+                    dataFinal: formData.get('dataFinal'),
+                    morador: formData.get('morador'),
+                    porteiro: formData.get('porteiro'),
+                    status: formData.get('status')
+                };
+
+                console.log('[Teste] Buscando relatório com filtros:', filtros);
+                const result = await window.electronAPI.buscarRelatorio(filtros);
+                
+                const mensagem = `Resultado da busca:\n${JSON.stringify(result, null, 2)}`;
+                mostrarResultado('result-relatorio', mensagem, result?.success ? 'success' : 'error');
+            } catch (error) {
+                mostrarResultado('result-relatorio', `Erro: ${error.message}`, 'error');
+            }
+        });
+
+        // Inicializar testes quando a página carregar
+        window.addEventListener('load', () => {
+            console.log('[Teste] Página de teste de relatórios carregada');
+            testarAPIsDisponiveis();
+            verificarModulos();
+        });
+    </script>
+</body>
+</html> 

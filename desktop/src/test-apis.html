@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Teste de APIs - Facilitta Portaria</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ccc; border-radius: 5px; }
+        .success { background-color: #d4edda; border-color: #c3e6cb; }
+        .error { background-color: #f8d7da; border-color: #f5c6cb; }
+        .warning { background-color: #fff3cd; border-color: #ffeaa7; }
+        button { margin: 5px; padding: 8px 15px; }
+        .api-test { margin: 10px 0; padding: 10px; background: #f8f9fa; border-radius: 4px; }
+    </style>
+</head>
+<body>
+    <h1>Teste de APIs - Facilitta Portaria</h1>
+    
+    <div class="test-section">
+        <h2>Status das APIs</h2>
+        <div id="api-status"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Teste de APIs Específicas</h2>
+        
+        <div class="api-test">
+            <h3>Configuração do Banco</h3>
+            <button onclick="testGetDbConfig()">Testar getDbConfig</button>
+            <button onclick="testSaveDbConfig()">Testar saveDbConfig</button>
+            <button onclick="testTestarConexaoBanco()">Testar testarConexaoBanco</button>
+            <button onclick="testCriarTabelasBanco()">Testar criarTabelasBanco</button>
+            <button onclick="testCriarBackupBanco()">Testar criarBackupBanco</button>
+        </div>
+        
+        <div class="api-test">
+            <h3>Usuários</h3>
+            <button onclick="testGetUsers()">Testar getUsers</button>
+            <button onclick="testGetUserById()">Testar getUserById</button>
+            <button onclick="testSaveUser()">Testar saveUser</button>
+            <button onclick="testUpdateUser()">Testar updateUser</button>
+            <button onclick="testDeleteUser()">Testar deleteUser</button>
+        </div>
+        
+        <div class="api-test">
+            <h3>Moradores</h3>
+            <button onclick="testGetResidents()">Testar getResidents</button>
+            <button onclick="testSaveResident()">Testar saveResident</button>
+            <button onclick="testUpdateResident()">Testar updateResident</button>
+            <button onclick="testDeleteResident()">Testar deleteResident</button>
+        </div>
+        
+        <div class="api-test">
+            <h3>Encomendas</h3>
+            <button onclick="testGetPendingPackages()">Testar getPendingPackages</button>
+            <button onclick="testSavePackage()">Testar savePackage</button>
+            <button onclick="testUpdatePackage()">Testar updatePackage</button>
+            <button onclick="testDeliverPackage()">Testar deliverPackage</button>
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Logs</h2>
+        <div id="logs" style="background: #f8f9fa; padding: 10px; height: 300px; overflow-y: auto; font-family: monospace; font-size: 12px;"></div>
+    </div>
+
+    <script>
+        // Função para adicionar logs
+        function addLog(message, type = 'info') {
+            const logsDiv = document.getElementById('logs');
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = document.createElement('div');
+            logEntry.innerHTML = `[${timestamp}] ${message}`;
+            logEntry.style.color = type === 'error' ? 'red' : type === 'success' ? 'green' : 'black';
+            logsDiv.appendChild(logEntry);
+            logsDiv.scrollTop = logsDiv.scrollHeight;
+        }
+
+        // Verificar APIs disponíveis
+        function checkAPIs() {
+            const apiStatus = document.getElementById('api-status');
+            const apis = [
+                'getDbConfig', 'saveDbConfig', 'testarConexaoBanco', 'criarTabelasBanco', 'criarBackupBanco',
+                'getUsers', 'getUserById', 'saveUser', 'updateUser', 'deleteUser',
+                'getResidents', 'saveResident', 'updateResident', 'deleteResident',
+                'getPendingPackages', 'savePackage', 'updatePackage', 'deliverPackage'
+            ];
+            
+            let html = '';
+            apis.forEach(api => {
+                const isAvailable = window.electronAPI && typeof window.electronAPI[api] === 'function';
+                const status = isAvailable ? '✅ Disponível' : '❌ Não disponível';
+                const className = isAvailable ? 'success' : 'error';
+                html += `<div class="${className}">${api}: ${status}</div>`;
+            });
+            
+            apiStatus.innerHTML = html;
+        }
+
+        // Testes de APIs específicas
+        async function testGetDbConfig() {
+            addLog('Testando getDbConfig...');
+            try {
+                if (!window.electronAPI?.getDbConfig) {
+                    throw new Error('API getDbConfig não disponível');
+                }
+                const result = await window.electronAPI.getDbConfig();
+                addLog(`getDbConfig: ${JSON.stringify(result)}`, 'success');
+            } catch (error) {
+                addLog(`getDbConfig erro: ${error.message}`, 'error');
+            }
+        }
+
+        async function testSaveDbConfig() {
+            addLog('Testando saveDbConfig...');
+            try {
+                if (!window.electronAPI?.saveDbConfig) {
+                    throw new Error('API saveDbConfig não disponível');
+                }
+                const config = {
+                    host: 'localhost',
+                    port: '5432',
+                    database: 'test',
+                    user: 'test',
+                    password: 'test'
+                };
+                const result = await window.electronAPI.saveDbConfig(config);
+                addLog(`saveDbConfig: ${JSON.stringify(result)}`, 'success');
+            } catch (error) {
+                addLog(`saveDbConfig erro: ${error.message}`, 'error');
+            }
+        }
+
+        async function testTestarConexaoBanco() {
+            addLog('Testando testarConexaoBanco...');
+            try {
+                if (!window.electronAPI?.testarConexaoBanco) {
+                    throw new Error('API testarConexaoBanco não disponível');
+                }
+                const config = {
+                    host: 'localhost',
+                    port: '5432',
+                    database: 'test',
+                    user: 'test',
+                    password: 'test'
+                };
+                const result = await window.electronAPI.testarConexaoBanco(config);
+                addLog(`testarConexaoBanco: ${JSON.stringify(result)}`, 'success');
+            } catch (error) {
+                addLog(`testarConexaoBanco erro: ${error.message}`, 'error');
+            }
+        }
+
+        async function testCriarTabelasBanco() {
+            addLog('Testando criarTabelasBanco...');
+            try {
+                if (!window.electronAPI?.criarTabelasBanco) {
+                    throw new Error('API criarTabelasBanco não disponível');
+                }
+                const result = await window.electronAPI.criarTabelasBanco();
+                addLog(`criarTabelasBanco: ${JSON.stringify(result)}`, 'success');
+            } catch (error) {
+                addLog(`criarTabelasBanco erro: ${error.message}`, 'error');
+            }
+        }
+
+        async function testCriarBackupBanco() {
+            addLog('Testando criarBackupBanco...');
+            try {
+                if (!window.electronAPI?.criarBackupBanco) {
+                    throw new Error('API criarBackupBanco não disponível');
+                }
+                const result = await window.electronAPI.criarBackupBanco();
+                addLog(`criarBackupBanco: ${JSON.stringify(result)}`, 'success');
+            } catch (error) {
+                addLog(`criarBackupBanco erro: ${error.message}`, 'error');
+            }
+        }
+
+        async function testGetUsers() {
+            addLog('Testando getUsers...');
+            try {
+                if (!window.electronAPI?.getUsers) {
+                    throw new Error('API getUsers não disponível');
+                }
+                const result = await window.electronAPI.getUsers();
+                addLog(`getUsers: ${result?.length || 0} usuários encontrados`, 'success');
+            } catch (error) {
+                addLog(`getUsers erro: ${error.message}`, 'error');
+            }
+        }
+
+        async function testGetUserById() {
+            addLog('Testando getUserById...');
+            try {
+                if (!window.electronAPI?.getUserById) {
+                    throw new Error('API getUserById não disponível');
+                }
+                const result = await window.electronAPI.getUserById(1);
+                addLog(`getUserById: ${JSON.stringify(result)}`, 'success');
+            } catch (error) {
+                addLog(`getUserById erro: ${error.message}`, 'error');
+            }
+        }
+
+        async function testSaveUser() {
+            addLog('Testando saveUser...');
+            try {
+                if (!window.electronAPI?.saveUser) {
+                    throw new Error('API saveUser não disponível');
+                }
+                const userData = {
+                    nomeUsuario: 'teste',
+                    nomeCompleto: 'Usuário Teste',
+                    email: 'teste@teste.com',
+                    senha: '123456',
+                    nivelAcesso: 'porteiro'
+                };
+                const result = await window.electronAPI.saveUser(userData);
+                addLog(`saveUser: ${JSON.stringify(result)}`, 'success');
+            } catch (error) {
+                addLog(`saveUser erro: ${error.message}`, 'error');
+            }
+        }
+
+        async function testUpdateUser() {
+            addLog('Testando updateUser...');
+            try {
+                if (!window.electronAPI?.updateUser) {
+                    throw new Error('API updateUser não disponível');
+                }
+                const updateData = {
+                    nomeUsuario: 'teste_atualizado',
+                    nomeCompleto: 'Usuário Teste Atualizado',
+                    email: 'teste_atualizado@teste.com',
+                    nivelAcesso: 'admin',
+                    status: 'Ativo'
+                };
+                const result = await window.electronAPI.updateUser(1, updateData);
+                addLog(`updateUser: ${JSON.stringify(result)}`, 'success');
+            } catch (error) {
+                addLog(`updateUser erro: ${error.message}`, 'error');
+            }
+        }
+
+        async function testDeleteUser() {
+            addLog('Testando deleteUser...');
+            try {
+                if (!window.electronAPI?.deleteUser) {
+                    throw new Error('API deleteUser não disponível');
+                }
+                const result = await window.electronAPI.deleteUser(1);
+                addLog(`deleteUser: ${JSON.stringify(result)}`, 'success');
+            } catch (error) {
+                addLog(`deleteUser erro: ${error.message}`, 'error');
+            }
+        }
+
+        async function testGetResidents() {
+            addLog('Testando getResidents...');
+            try {
+                if (!window.electronAPI?.getResidents) {
+                    throw new Error('API getResidents não disponível');
+                }
+                const result = await window.electronAPI.getResidents();
+                addLog(`getResidents: ${result?.length || 0} moradores encontrados`, 'success');
+            } catch (error) {
+                addLog(`getResidents erro: ${error.message}`, 'error');
+            }
+        }
+
+        async function testSaveResident() {
+            addLog('Testando saveResident...');
+            try {
+                if (!window.electronAPI?.saveResident) {
+                    throw new Error('API saveResident não disponível');
+                }
+                const residentData = {
+                    nome: 'Morador Teste',
+                    telefone: '123456789',
+                    rua: 'Rua Teste',
+                    numero: '123',
+                    bloco: 'A',
+                    apartamento: '101',
+                    observacoes: 'Teste'
+                };
+                const result = await window.electronAPI.saveResident(residentData);
+                addLog(`saveResident: ${JSON.stringify(result)}`, 'success');
+            } catch (error) {
+                addLog(`saveResident erro: ${error.message}`, 'error');
+            }
+        }
+
+        async function testUpdateResident() {
+            addLog('Testando updateResident...');
+            try {
+                if (!window.electronAPI?.updateResident) {
+                    throw new Error('API updateResident não disponível');
+                }
+                const residentData = {
+                    nome: 'Morador Teste Atualizado',
+                    telefone: '987654321',
+                    rua: 'Rua Teste Atualizada',
+                    numero: '456',
+                    bloco: 'B',
+                    apartamento: '202',
+                    observacoes: 'Teste Atualizado'
+                };
+                const result = await window.electronAPI.updateResident(1, residentData);
+                addLog(`updateResident: ${JSON.stringify(result)}`, 'success');
+            } catch (error) {
+                addLog(`updateResident erro: ${error.message}`, 'error');
+            }
+        }
+
+        async function testDeleteResident() {
+            addLog('Testando deleteResident...');
+            try {
+                if (!window.electronAPI?.deleteResident) {
+                    throw new Error('API deleteResident não disponível');
+                }
+                const result = await window.electronAPI.deleteResident(1);
+                addLog(`deleteResident: ${JSON.stringify(result)}`, 'success');
+            } catch (error) {
+                addLog(`deleteResident erro: ${error.message}`, 'error');
+            }
+        }
+
+        async function testGetPendingPackages() {
+            addLog('Testando getPendingPackages...');
+            try {
+                if (!window.electronAPI?.getPendingPackages) {
+                    throw new Error('API getPendingPackages não disponível');
+                }
+                const result = await window.electronAPI.getPendingPackages();
+                addLog(`getPendingPackages: ${result?.length || 0} encomendas encontradas`, 'success');
+            } catch (error) {
+                addLog(`getPendingPackages erro: ${error.message}`, 'error');
+            }
+        }
+
+        async function testSavePackage() {
+            addLog('Testando savePackage...');
+            try {
+                if (!window.electronAPI?.savePackage) {
+                    throw new Error('API savePackage não disponível');
+                }
+                const packageData = {
+                    moradorId: 1,
+                    porteiroUserId: 1,
+                    quantidade: 1,
+                    dataRecebimento: new Date().toISOString(),
+                    observacoes: 'Teste'
+                };
+                const result = await window.electronAPI.savePackage(packageData);
+                addLog(`savePackage: ${JSON.stringify(result)}`, 'success');
+            } catch (error) {
+                addLog(`savePackage erro: ${error.message}`, 'error');
+            }
+        }
+
+        async function testUpdatePackage() {
+            addLog('Testando updatePackage...');
+            try {
+                if (!window.electronAPI?.updatePackage) {
+                    throw new Error('API updatePackage não disponível');
+                }
+                const packageData = {
+                    moradorId: 1,
+                    porteiroUserId: 1,
+                    quantidade: 2,
+                    dataRecebimento: new Date().toISOString(),
+                    observacoes: 'Teste Atualizado'
+                };
+                const result = await window.electronAPI.updatePackage(1, packageData);
+                addLog(`updatePackage: ${JSON.stringify(result)}`, 'success');
+            } catch (error) {
+                addLog(`updatePackage erro: ${error.message}`, 'error');
+            }
+        }
+
+        async function testDeliverPackage() {
+            addLog('Testando deliverPackage...');
+            try {
+                if (!window.electronAPI?.deliverPackage) {
+                    throw new Error('API deliverPackage não disponível');
+                }
+                const deliveryData = {
+                    porteiroEntregouId: 1,
+                    dataEntrega: new Date().toISOString(),
+                    retiradoPorNome: 'Teste',
+                    observacoesEntrega: 'Teste'
+                };
+                const result = await window.electronAPI.deliverPackage(1, deliveryData);
+                addLog(`deliverPackage: ${JSON.stringify(result)}`, 'success');
+            } catch (error) {
+                addLog(`deliverPackage erro: ${error.message}`, 'error');
+            }
+        }
+
+        // Verificar APIs quando a página carregar
+        window.addEventListener('load', () => {
+            addLog('Página carregada, verificando APIs...');
+            setTimeout(checkAPIs, 1000);
+        });
+    </script>
+</body>
+</html> 

@@ -1,0 +1,7 @@
+{
+  "host": "localhost",
+  "port": "5432",
+  "database": "controle_encomendas",
+  "user": "postgres",
+  "password": "sua_senha_aqui"
+}
