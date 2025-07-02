@@ -161,19 +161,7 @@ export default function ModoLoteScreen() {
         console.log(`[Modo Lote] ${moradoresValidados.length} moradores carregados`);
       } else {
         console.warn('Erro na resposta da API:', result.message);
-        // Fallback para moradores simulados se a API falhar
-        const moradoresSimulados: Morador[] = [
-          { id: '1', nome: 'Ana Silva', apartamento: '101', bloco: 'A' },
-          { id: '2', nome: 'João Santos', apartamento: '102', bloco: 'A' },
-          { id: '3', nome: 'Maria Oliveira', apartamento: '103', bloco: 'A' },
-          { id: '4', nome: 'Pedro Lima', apartamento: '201', bloco: 'B' },
-          { id: '5', nome: 'Carlos Souza', apartamento: '202', bloco: 'B' },
-          { id: '6', nome: 'Lucia Costa', apartamento: '301', bloco: 'C' },
-        ];
-        setMoradores(moradoresSimulados);
-        setMoradoresFiltrados(moradoresSimulados);
-        console.log('[Modo Lote] Usando moradores simulados');
-      }
+     //REMOVIDO MORADORES SIMULADOS
     } catch (error) {
       console.error('Erro ao carregar moradores:', error);
   
