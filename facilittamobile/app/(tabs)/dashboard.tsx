@@ -210,18 +210,18 @@ export default function DashboardScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#4070f4',
+    backgroundColor: '#4070f4,
   },
   topBackground: {
     backgroundColor: '#4070f4',
-    paddingBottom: 120, // Reduzido de 150 para 120
+    paddingBottom: 120, 
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 20,
-    marginBottom: 40, // Reduzido de 60 para 40
+    marginBottom: 40, 
     paddingTop: 10,
   },
   headerContent: {
